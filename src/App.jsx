@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import APIForm from './Components/APIForm';
+import Gallery from './Components/Gallery';
 import './App.css'
 
 const ACCESS_KEY = import.meta.env.VITE_APP_ACCESS_KEY;
 
 function App() {
 
-  const [displayScrnShot, setDisplayScrnShot] = useState(null);
+  const [currScrnShot, setCurrScrnShot] = useState(null);
+
+  const [prevScrnShot, setPrevScrnShot] = useState([]);
   
   const [inputs, setInputs] = useState({
     url: "",
@@ -35,7 +38,8 @@ function App() {
     if (json.url == null) {
       alert("Oops! Something went wroong with that query, let's try again!")
     } else {
-      setDisplayScrnShot(json.url);
+      setCurrScrnShot(json.url);
+      setPrevScrnShot((images) => [...images, json.url]);
       reset();
     }
   }
@@ -91,15 +95,13 @@ function App() {
         onSubmit={submitForm}
       />
       <br></br>
-      {displayScrnShot ? (
+      {currScrnShot ? (
         <img
           className="screenshot"
-          src={displayScrnShot}
+          src={currScrnShot}
           alt="Screenshot returned"
         />
-      ) : (
-        <div> </div>
-      )}
+      ):(<div></div>)}
       <div className="container">
         <h3> Current Query Status: </h3>
         <p>
@@ -118,6 +120,9 @@ function App() {
         </p>
       </div>
     <br></br>
+    <div className="container">
+      <Gallery images={prevScrnShot} />
+    </div>
     </div>
   );
 }
